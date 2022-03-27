@@ -5,9 +5,9 @@ using namespace std;
 #define pq priority_queue
 #define pii pair<int,int>
 #define inf 10000000
-int a[5005];
-int treemax[5005*4];
-int treemin[5005*4];
+int a[50005];
+int treemax[50005*4];
+int treemin[55005*4];
 void Buildtree(int id,int l,int r){
     if(l==r){
        treemax[id]=a[l];
