@@ -1,74 +1,62 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 #define ll long long
 #define ld long double
 #define pq priority_queue
-#define inf 1000
-#define pii pair<ll,ll>
-vector<pair<ll,ll>> graph[inf];
-vector<ll>D;
-ll trace[inf];
-void Dijkstra(ll start,ll nodes){
-    for(ll i=0;i<nodes+2;i++){
-      D.push_back(inf);
+#define pii pair<int,int>
+#define inf 10000000
+int a[5005];
+int treemax[5005*4];
+int treemin[5005*4];
+void Buildtree(int id,int l,int r){
+    if(l==r){
+       treemax[id]=a[l];
+       treemin[id]=a[l];
+       return;
     }
-    D[start]=0;
-    trace[start]=-1;
-    pq<pair<ll,ll>,vector<pair<ll,ll>>,greater<pair<ll,ll>>> q;
-    q.push({0,start});
-    while (q.size()!=0)
-    {
-      ll u=q.top().second;
-      q.pop();
-      for(ll i=0;i<graph[u].size();i++){
-        ll v=graph[u][i].second;
-        ll w=graph[u][i].first;
-        if(D[v]>D[u]+w){
-          D[v]=D[u]+w;
-          q.push({D[v],v});
-          trace[v]=u;
-        }
-      }
-    }
-    
+    int mid=(l+r)/2;
+    Buildtree(id*2,l,mid);
+    Buildtree(id*2+1,mid+1,r);
+    treemax[id]=max(treemax[id*2],treemax[id*2+1]);
+    treemin[id]=min(treemin[id*2],treemin[id*2+1]);
 }
-main(){
-  ios_base::sync_with_stdio(0);
-  cin.tie(0);
-  cout.tie(0);
-  ll n,m,k;
-  cin>>n>>m>>k;
-  // freopen("main.inp","r",stdin);
-  // freopen("main.out","w",stdout);
-  for(ll i=0;i<m;i++){
-     ll u,v,c;
-     cin>>u>>v>>c;
-     pii o={c,v};
-     pii p={c,u};
-     graph[u].push_back(o);
-     graph[v].push_back(p);
-  }
-  for(ll i=0;i<k;i++){
-    ll k0,u,v;
-    cin>>k0>>u>>v;
-    if(k0==0){
-      Dijkstra(u,n);
-      cout<<D[v]<<endl;
+int  maximum(int id,int l,int r,int u,int v){
+    if(r<u || l>v) return -INFINITY;
+
+    if(u<=l && v>=r){
+        return treemax[id];
     }
-    if(k0==1){
-      ll cur=v;
-      vector<ll>way;
-      ll cnt=0;
-      while(cur!=-1){
-          cnt++;
-          way.push_back(cur);
-          cur=trace[cur];
-      }
-      cout<<cnt<<" ";
-      for(ll i=cnt-1;i>=0;i--){
-            cout<<way[i]<<" ";
-      }
-      cout<<endl;
+    int mid=(l+r)/2;
+    return max(maximum(id*2,l,mid,u,v),maximum(id*2+1,mid+1,r,u,v));
+}
+int minimum(int id,int l,int r,int u,int v){
+    if(r<u || l>v) return INFINITY;
+
+    if(u<=l && v>=r){
+        return treemin[id];
     }
-  }
+    int mid=(l+r)/2;
+    return min(minimum(id*2,l,mid,u,v),minimum(id*2+1,mid+1,r,u,v));
+}
+int main(){
+   ios_base::sync_with_stdio(0);
+   cin.tie(0);
+   cout.tie(0);
+   freopen("main.inp","r",stdin);
+   freopen("main.out","w",stdout);
+   int n,m;
+   cin>>n>>m;
+   for(int i=1;i<=n;i++){
+      int b;
+      cin>>b;
+      a[i]=b;
+   }
+   Buildtree(1,1,n);
+   for(int i=0;i<m;i++){
+      int a,b;
+      cin>>a>>b;
+      cout<<maximum(1,1,n,a,b)-minimum(1,1,n,a,b)<<endl;
+   }
+   return 0;
+
 }
