@@ -5,31 +5,41 @@ using namespace std;
 #define pq priority_queue
 #define pii pair<int,int>
 #define inf 10000000
-int n,k;
-int thang[100005];
+#define size 100001
+int timed[100005];
+int t[100005];
 int F[100005];
-ll find(int n){
-   if(thang[n]==1) return 0;
-   if(F[n]!=0) return F[n];
-   if(n==1) return 1;
-   else{
-      F[n]=find(n-1)+find(n-2);
-      return F[n];
-   }
+int find(int n){
+    if(F[n]!=0) return F[n];
+    if(n==1) return timed[1];
+    if(n==0) return t[1];
+    if(n<0) return inf;
+    else{
+       int a=find(n-1)+timed[n];
+       int b=find(n-2)+t[n];
+       F[n]=min(a,b);
+       return F[n];
+    }
 }
 int main(){
    ios_base::sync_with_stdio(0);
    cin.tie(0);
    cout.tie(0);
-   // freopen("main.inp","r",stdin);
-   // freopen("main.out","w",stdout);
-   cin>>n>>k;
-   for(int i=0;i<k;i++){
+   freopen("main.inp","r",stdin);
+   freopen("main.out","w",stdout);
+   int n;
+   cin>>n;
+   for(int i=0;i<n;i++){
       int a;
       cin>>a;
-      thang[a]=1;
+      timed[n-i+1]=a;
    }
-   cout<<find(n)%14062008<<endl;
+   for(int i=1;i<n;i++){
+      int r;
+      cin>>r;
+      t[n-i]=r;
+   }
+   cout<<find(n)<<endl;
    return 0;
 
 }
